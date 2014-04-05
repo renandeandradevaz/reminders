@@ -1,0 +1,15 @@
+#novo-lembrete {
+    min-width: 50%;
+}
+
+#lembretes td {
+    border-bottom: 1px solid #eee;
+    padding: 10px;
+}
+
+.excluir-lembrete {
+    font-size: 40px;
+    color: rgb(185, 27, 27);
+    cursor: pointer;
+    font-family: cursive;
+}

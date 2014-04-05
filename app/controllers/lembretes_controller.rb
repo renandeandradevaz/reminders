@@ -1,6 +1,12 @@
 class LembretesController < ApplicationController
 
+  def index
+
+  end
+
   def sincronizar
+
+    puts params[:lembretes]
 
     lembretes = JSON.parse params[:lembretes]
 
@@ -30,7 +36,7 @@ class LembretesController < ApplicationController
 
     end
 
-    render :json => Lembrete.where(:excluido => false).to_json, :callback => params['callback']
+    render :json => Lembrete.where(:excluido => false).to_json
 
   end
 end
