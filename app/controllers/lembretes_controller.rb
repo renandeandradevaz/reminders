@@ -14,18 +14,23 @@ class LembretesController < ApplicationController
 
           lembrete = Lembrete.new
           lembrete.conteudo = key
+          lembrete.excluido = JSON.parse(value)['excluido']
+
+        else
+
+          if JSON.parse(value)['excluido']
+            lembrete.excluido = JSON.parse(value)['excluido']
+          end
+
         end
 
-        lembrete.excluido = JSON.parse(value)['excluido']
         lembrete.save
 
       end
 
     end
 
-    Lembrete.where(:excluido => true).destroy_all
-
-    render :json => Lembrete.all.to_json, :callback => params['callback']
+    render :json => Lembrete.where(:excluido => false).to_json, :callback => params['callback']
 
   end
 end
