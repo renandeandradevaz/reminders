@@ -1,55 +1,125 @@
-$('document').ready(function(){
+$('document').ready(function () {
 
-	exibirLembretesSalvos();
-	adicionarEventoCriacaoNovosLembretes();
-	adicionarEventoRemocaoLembretes();
+    verificaEnderecoServer();
+    exibirLembretesSalvos();
+    adicionarEventoCriacaoNovosLembretes();
+    adicionarEventoRemocaoLembretes();
+    adicionarEventoSincronizarLembretes();
+    setInterval(sincronizar, 60000);
 });
 
-function exibirLembretesSalvos(){
+function exibirLembretesSalvos() {
 
-	$('#lembretes').empty();
+    $('#lembretes').empty();
 
-	for (var i = 0; i < localStorage.length; i++){
+    for (var i = 0; i < localStorage.length; i++) {
 
-		var lembreteString = localStorage.getItem(localStorage.key(i));
-		lembrete = JSON.parse(lembreteString);
+        var lembreteString = localStorage.getItem(localStorage.key(i));
 
-		if(!lembrete.excluido){
+        if(localStorage.key(i) !== 'enderecoServer'){
 
-			$('#lembretes').append('<tr>');
-			$('#lembretes').find('tr:last').append('<td>');
-			$('#lembretes').find('td:last').append(lembrete.conteudo);
-			$('#lembretes').find('tr:last').append('<td>');
-			$('#lembretes').find('td:last').append('x');
-			$('#lembretes').find('td:last').addClass('excluir-lembrete');
-		}
-	}
+            lembrete = JSON.parse(lembreteString);
 
-	adicionarEventoRemocaoLembretes();
+            if (!lembrete.excluido) {
+
+                $('#lembretes').append('<tr>');
+                $('#lembretes').find('tr:last').append('<td>');
+                $('#lembretes').find('td:last').append(lembrete.conteudo);
+                $('#lembretes').find('tr:last').append('<td>');
+                $('#lembretes').find('td:last').append('x');
+                $('#lembretes').find('td:last').addClass('excluir-lembrete');
+            }
+        }
+    }
+
+    adicionarEventoRemocaoLembretes();
 }
 
-function adicionarEventoCriacaoNovosLembretes(){
+function adicionarEventoCriacaoNovosLembretes() {
 
-	$('#criar-novo-lembrete').submit(function(){
+    $('#criar-novo-lembrete').submit(function () {
 
-		var conteudoLembrete = $('#novo-lembrete').val();
+        var conteudoLembrete = $('#novo-lembrete').val();
 
-		var lembrete = {conteudo: conteudoLembrete, excluido:false};
+        var lembrete = {conteudo: conteudoLembrete, excluido: false};
 
-		localStorage.setItem(conteudoLembrete , JSON.stringify(lembrete));
+        localStorage.setItem(conteudoLembrete, JSON.stringify(lembrete));
     });
 }
 
-function adicionarEventoRemocaoLembretes(){
+function adicionarEventoRemocaoLembretes() {
 
-	$('.excluir-lembrete').on('click', function(){
+    $('.excluir-lembrete').on('click', function () {
 
-		var conteudoLembrete = $(this).parent().find('td:first').text();
+        var conteudoLembrete = $(this).parent().find('td:first').text();
 
-		var lembrete = {conteudo: conteudoLembrete, excluido:true};
+        var lembrete = {conteudo: conteudoLembrete, excluido: true};
 
-		localStorage.setItem(conteudoLembrete , JSON.stringify(lembrete));
+        localStorage.setItem(conteudoLembrete, JSON.stringify(lembrete));
 
-		exibirLembretesSalvos();
+        exibirLembretesSalvos();
     });
+}
+
+function adicionarEventoSincronizarLembretes() {
+
+    $('#sincronizar').on('click', function () {
+
+        sincronizar();
+    });
+}
+
+function sincronizar(){
+
+    var enderecoServer = localStorage.getItem('enderecoServer');
+
+    if(enderecoServer != undefined){
+
+        var localStorageCompleto = JSON.stringify(localStorage);
+
+        $.ajax({
+            type: "POST",
+            dataType: 'jsonp',
+            url: enderecoServer + "/lembretes/sincronizar",
+            data: {
+                lembretes: localStorageCompleto
+            },
+            success: function( lembretes ) {
+
+                var enderecoServer = localStorage.getItem('enderecoServer');
+
+                localStorage.clear();
+
+                localStorage.setItem('enderecoServer', enderecoServer);
+
+                for (var i in lembretes) {
+
+                    localStorage.setItem(lembretes[i].conteudo, JSON.stringify(lembretes[i]));
+                }
+
+                exibirLembretesSalvos();
+            }
+        });
+    }
+}
+
+function verificaEnderecoServer(){
+
+    var enderecoServer = localStorage.getItem('enderecoServer');
+
+    if(enderecoServer != undefined){
+
+        $('#endereco-server-div').hide();
+        $('#conteudo').show();
+
+    } else{
+
+        $('#conteudo').hide();
+
+        if($('#endereco-server').val() !== ''){
+
+            localStorage.setItem('enderecoServer', $('#endereco-server').val());
+            verificaEnderecoServer();
+        }
+    }
 }

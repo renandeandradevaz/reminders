@@ -1,28 +1,44 @@
 <!doctype html>
 
-<html >
+<html>
 <head>
-  <meta charset="utf-8">
-  <title> Lembretes </title>
-  <link rel="stylesheet" href="css/styles.css?v=1.0">
+    <meta charset="utf-8">
+    <title> Lembretes </title>
+    <link rel="stylesheet" href="css/styles.css?v=1.0">
 </head>
 
 <body>
 
-	<form id='criar-novo-lembrete'>
+<div id="endereco-server-div">
+    <input type='text' id='endereco-server' placeholder="Server" autofocus>
+    <input type='submit' value='OK' onclick="verificaEnderecoServer()">
+</div>
 
-		<input type='text' id='novo-lembrete' placeholder='Lembrete...' autofocus autocomplete='off'>
+<div id="conteudo">
 
-		<input type='submit' value='Adicionar'>
+    <form id='criar-novo-lembrete'>
 
-	</form>
+        <input type='text' id='novo-lembrete' placeholder='Lembrete...' autofocus autocomplete='off'>
 
-	<br>
-	<br>
+        <input type='submit' value='Adicionar'>
 
-	<table id='lembretes'> </table>
+    </form>
 
-	<script src="js/jquery.js"></script>
-	<script src="js/scripts.js"></script>
+    <br>
+    <br>
+
+    <table id='lembretes'></table>
+
+    <br>
+    <br>
+    <br>
+
+    <button id="sincronizar"> Sincronizar</button>
+
+</div>
+
+
+<script src="js/jquery.js"></script>
+<script src="js/scripts.js"></script>
 </body>
 </html>
