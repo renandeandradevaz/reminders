@@ -77,8 +77,6 @@ function sincronizar(){
 
         var localStorageCompleto = JSON.stringify(localStorage);
 
-        console.log(localStorageCompleto);
-
         $.ajax({
             url: enderecoServer + "/lembretes/sincronizar",
             data: {
